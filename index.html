@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Electronic Love</title>
+    <style>
+        body {
+            margin: 0;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            background: #1a1a1a;
+            overflow: hidden;
+        }
+
+        .message {
+            font-family: 'Courier New', monospace;
+            color: #ff4d4d;
+            text-shadow: 0 0 10px #ff4d4d, 0 0 20px #ff4d4d;
+            font-size: 2.5em;
+            margin-bottom: 20px;
+            animation: glow 2s ease-in-out infinite;
+        }
+
+        .heart-container {
+            position: relative;
+            width: 300px;
+            height: 300px;
+        }
+
+        .led {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background: #ff4d4d;
+            border-radius: 50%;
+            box-shadow: 0 0 10px #ff4d4d, 0 0 20px #ff4d4d;
+            animation: pulse 1.5s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% {
+                transform: scale(1);
+                opacity: 0.6;
+                box-shadow: 0 0 10px #ff4d4d, 0 0 20px #ff4d4d;
+            }
+            50% {
+                transform: scale(1.2);
+                opacity: 1;
+                box-shadow: 0 0 15px #ff4d4d, 0 0 30px #ff4d4d;
+            }
+        }
+
+        @keyframes glow {
+            0%, 100% {
+                text-shadow: 0 0 10px #ff4d4d, 0 0 20px #ff4d4d;
+            }
+            50% {
+                text-shadow: 0 0 15px #ff4d4d, 0 0 30px #ff4d4d;
+            }
+        }
+
+        .sparkle {
+            position: absolute;
+            width: 5px;
+            height: 5px;
+            background: #fff;
+            border-radius: 50%;
+            opacity: 0;
+            pointer-events: none;
+            animation: sparkle 0.5s ease-out forwards;
+        }
+
+        @keyframes sparkle {
+            0% {
+                opacity: 1;
+                transform: scale(1);
+            }
+            100% {
+                opacity: 0;
+                transform: scale(2) translateY(-20px);
+            }
+        }
+
+        .heart-container:hover .sparkle {
+            animation: sparkle 0.5s ease-out forwards;
+        }
+
+        .music-toggle {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            padding: 10px 20px;
+            background: #333;
+            color: #ff4d4d;
+            border: 2px solid #ff4d4d;
+            border-radius: 5px;
+            cursor: pointer;
+            font-family: 'Courier New', monospace;
+            transition: all 0.3s ease;
+        }
+
+        .music-toggle:hover {
+            background: #ff4d4d;
+            color: #1a1a1a;
+            box-shadow: 0 0 10px #ff4d4d;
+        }
+    </style>
+</head>
+<body>
+    <div class="message">Hi Ritika</div>
+    <div class="heart-container" id="heart">
+        <!-- LEDs will be added via JavaScript -->
+    </div>
+    <button class="music-toggle" onclick="toggleMusic()">Play Music</button>
+    <audio id="background-music" loop>
+        <source src="espresso.mp3" type="audio/mpeg">
+        <!-- Note: Replace with actual audio URL or host the file -->
+    </audio>
+
+    <script>
+        const heartContainer = document.getElementById('heart');
+        const audio = document.getElementById('background-music');
+
+        // Heart shape coordinates (approximated for LED placement)
+        const heartPoints = [
+            {x: 150, y: 100}, {x: 130, y: 80}, {x: 110, y: 70}, {x: 90, y: 80}, {x: 80, y: 100},
+            {x: 80, y: 120}, {x: 90, y: 140}, {x: 110, y: 160}, {x: 130, y: 180}, {x: 150, y: 200},
+            {x: 170, y: 180}, {x: 190, y: 160}, {x: 210, y: 140}, {x: 220, y: 120}, {x: 220, y: 100},
+            {x: 210, y: 80}, {x: 190, y: 70}, {x: 170, y: 80}
+        ];
+
+        // Add LEDs
+        heartPoints.forEach(point => {
+            const led = document.createElement('div');
+            led.className = 'led';
+            led.style.left = `${point.x - 5}px`; // Center the LED
+            led.style.top = `${point.y - 5}px`;
+            heartContainer.appendChild(led);
+        });
+
+        // Sparkle effect on hover
+        heartContainer.addEventListener('mousemove', (e) => {
+            const sparkle = document.createElement('div');
+            sparkle.className = 'sparkle';
+            sparkle.style.left = `${e.offsetX}px`;
+            sparkle.style.top = `${e.offsetY}px`;
+            heartContainer.appendChild(sparkle);
+            setTimeout(() => sparkle.remove(), 500); // Remove after animation
+        });
+
+        // Music toggle
+        let isPlaying = false;
+        function toggleMusic() {
+            if (isPlaying) {
+                audio.pause();
+                document.querySelector('.music-toggle').textContent = 'Play Music';
+            } else {
+                audio.play().catch(() => alert('Please interact with the page first to enable audio.'));
+                document.querySelector('.music-toggle').textContent = 'Pause Music';
+            }
+            isPlaying = !isPlaying;
+        }
+    </script>
+</body>
+</html>
