@@ -3,167 +3,638 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Electronic Love</title>
+    <title>Apple-Style Handwritten Hello Ritika</title>
+    <link rel="preload" href="hello.svg" as="image">
     <style>
         body {
             margin: 0;
             height: 100vh;
             display: flex;
-            flex-direction: column;
             justify-content: center;
             align-items: center;
-            background: #1a1a1a;
+            background: linear-gradient(135deg, #000000, #1a1a1a, #0d3934, #ff5e62);
+            background-size: 200% 200%;
+            animation: gradientShift 15s ease infinite;
+            overflow: hidden;
+            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", sans-serif;
+            perspective: 1000px;
+            touch-action: manipulation;
+        }
+        
+        @keyframes gradientShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        
+        .container {
+            position: relative;
+            width: 100vw;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
             overflow: hidden;
         }
-
-        .message {
-            font-family: 'Courier New', monospace;
-            color: #ff4d4d;
-            text-shadow: 0 0 10px #ff4d4d, 0 0 20px #ff4d4d;
-            font-size: 2.5em;
-            margin-bottom: 20px;
-            animation: glow 2s ease-in-out infinite;
+        
+        #svg-container {
+            width: 95vw;
+            max-width: 95vw;
+            height: 90vh;
+            filter: drop-shadow(0 10px 30px rgba(0, 0, 0, 0.6));
+            opacity: 0;
+            transform: translateY(20px) scale(0.96);
+            transition: all 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            animation: fadeIn 1s cubic-bezier(0.215, 0.61, 0.355, 1) 0.3s forwards;
+            display: flex;
+            justify-content: center;
+            align-items: center;
         }
-
-        .heart-container {
+        
+        .svg-wrapper {
             position: relative;
-            width: 300px;
-            height: 300px;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
         }
-
-        .led {
-            position: absolute;
-            width: 10px;
-            height: 10px;
-            background: #ff4d4d;
-            border-radius: 50%;
-            box-shadow: 0 0 10px #ff4d4d, 0 0 20px #ff4d4d;
-            animation: pulse 1.5s ease-in-out infinite;
+        
+        .svg-wrapper svg {
+            width: 100%;
+            height: 100%;
+            max-height: 90vh;
+            object-fit: contain;
         }
-
-        @keyframes pulse {
-            0%, 100% {
-                transform: scale(1);
-                opacity: 0.6;
-                box-shadow: 0 0 10px #ff4d4d, 0 0 20px #ff4d4d;
-            }
-            50% {
-                transform: scale(1.2);
+        
+        .svg-wrapper:hover svg {
+            transform: scale(1.02);
+            transition: transform 0.3s ease;
+            filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.3));
+        }
+        
+        #pen-tip {
+            fill: #ffffff;
+            filter: url(#glow);
+            opacity: 0.9;
+            transform-origin: center;
+            animation: penPulse 1.5s ease-in-out infinite;
+        }
+        
+        @keyframes penPulse {
+            0%, 100% { opacity: 0.9; r: 3; }
+            50% { opacity: 1; r: 3.8; }
+        }
+        
+        .hello-ritika-path {
+            fill: none;
+            stroke: url(#apple-gradient);
+            stroke-width: 5;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+            filter: url(#subtle-blur);
+        }
+        
+        @keyframes fadeIn {
+            to {
                 opacity: 1;
-                box-shadow: 0 0 15px #ff4d4d, 0 0 30px #ff4d4d;
+                transform: translateY(0) scale(1);
             }
         }
-
-        @keyframes glow {
-            0%, 100% {
-                text-shadow: 0 0 10px #ff4d4d, 0 0 20px #ff4d4d;
-            }
-            50% {
-                text-shadow: 0 0 15px #ff4d4d, 0 0 30px #ff4d4d;
-            }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
         }
-
-        .sparkle {
+        
+        @keyframes draw {
+            to { stroke-dashoffset: 0; }
+        }
+        
+        .ambient-particle {
             position: absolute;
-            width: 5px;
-            height: 5px;
-            background: #fff;
             border-radius: 50%;
+            background: radial-gradient(rgba(255, 255, 255, 0.8), rgba(255, 255, 255, 0));
+            pointer-events: none;
+            opacity: 0;
+        }
+        
+        .completion-particle {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            border-radius: 50%;
+            background: white;
+            box-shadow: 0 0 10px 2px rgba(255, 255, 255, 0.8);
             opacity: 0;
             pointer-events: none;
-            animation: sparkle 0.5s ease-out forwards;
         }
-
-        @keyframes sparkle {
-            0% {
-                opacity: 1;
-                transform: scale(1);
-            }
-            100% {
-                opacity: 0;
-                transform: scale(2) translateY(-20px);
-            }
+        
+        .loading {
+            position: absolute;
+            width: 40px;
+            height: 40px;
+            border: 3px solid rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            border-top-color: rgba(255, 255, 255, 0.8);
+            animation: spin 1s ease-in-out infinite;
+            opacity: 1;
+            transition: opacity 0.5s ease;
         }
-
-        .heart-container:hover .sparkle {
-            animation: sparkle 0.5s ease-out forwards;
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
         }
-
-        .music-toggle {
-            position: fixed;
+        
+        .ios-blur {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            backdrop-filter: blur(30px);
+            -webkit-backdrop-filter: blur(30px);
+            background-color: rgba(30, 30, 30, 0.3);
+            border-radius: 0;
+            opacity: 0;
+            transform: scale(0.9);
+            animation: blurReveal 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+            z-index: -1;
+        }
+        
+        .audio-controls {
+            position: absolute;
             bottom: 20px;
             right: 20px;
-            padding: 10px 20px;
-            background: #333;
-            color: #ff4d4d;
-            border: 2px solid #ff4d4d;
-            border-radius: 5px;
+            z-index: 100;
+            display: flex;
+            gap: 10px;
+            opacity: 0;
+            animation: fadeIn 0.5s ease 2s forwards;
+        }
+        
+        .audio-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            border: none;
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(5px);
+            -webkit-backdrop-filter: blur(5px);
+            color: white;
+            font-size: 18px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
             cursor: pointer;
-            font-family: 'Courier New', monospace;
             transition: all 0.3s ease;
         }
-
-        .music-toggle:hover {
-            background: #ff4d4d;
-            color: #1a1a1a;
-            box-shadow: 0 0 10px #ff4d4d;
+        
+        .audio-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: scale(1.05);
+        }
+        
+        .audio-btn:active {
+            transform: scale(0.95);
+        }
+        
+        .orientation-guide {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            z-index: 9999;
+            text-align: center;
+            padding: 20px;
+            box-sizing: border-box;
+            role: "alert";
+        }
+        
+        .orientation-guide p {
+            color: white;
+            font-size: 18px;
+            margin-bottom: 20px;
+            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", sans-serif;
+        }
+        
+        .orientation-guide svg {
+            width: 100px;
+            height: 100px;
+            fill: white;
+            animation: rotate 2s ease infinite;
+        }
+        
+        @keyframes rotate {
+            0% { transform: rotate(0deg); }
+            25% { transform: rotate(90deg); }
+            50% { transform: rotate(90deg); }
+            75% { transform: rotate(0deg); }
+            100% { transform: rotate(0deg); }
+        }
+        
+        @media (max-width: 768px) {
+            #svg-container {
+                width: 100vw;
+                max-width: 100vw;
+            }
+        }
+        
+        @media (max-width: 480px) and (orientation: portrait) {
+            .audio-controls {
+                bottom: 10px;
+                right: 10px;
+            }
+            
+            .audio-btn {
+                width: 44px;
+                height: 44px;
+                font-size: 18px;
+            }
+        }
+        
+        @keyframes blurReveal {
+            to {
+                opacity: 0.7;
+                transform: scale(1);
+            }
         }
     </style>
 </head>
 <body>
-    <div class="message">Hi Ritika</div>
-    <div class="heart-container" id="heart">
-        <!-- LEDs will be added via JavaScript -->
+    <noscript>
+        <div style="color: white; text-align: center; padding: 20px; font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', sans-serif;">
+            JavaScript is disabled. Please enable it to view the animated "Hello Ritika" experience.
+        </div>
+    </noscript>
+    <div class="container">
+        <div class="ios-blur"></div>
+        <div class="loading" id="loading"></div>
+        <div id="animation-status" aria-live="polite" style="position: absolute; clip: rect(0 0 0 0);"></div>
+        <div id="svg-container" style="display: none;">
+            <div class="svg-wrapper">
+                <!-- The SVG will be loaded here -->
+            </div>
+        </div>
+        
+        <!-- Audio controls -->
+        <div class="audio-controls">
+            <button class="audio-btn" id="play-music" aria-label="Play background music" style="display: none;" tabindex="0">▶</button>
+            <button class="audio-btn" id="pause-music" aria-label="Pause background music" tabindex="0">⏸</button>
+        </div>
+        
+        <!-- Background audio -->
+        <audio id="bg-music" loop preload="auto" autoplay>
+            <source src="espresso.mp3" type="audio/mpeg">
+            Your browser does not support the audio element.
+        </audio>
     </div>
-    <button class="music-toggle" onclick="toggleMusic()">Play Music</button>
-    <audio id="background-music" loop>
-        <source src="espresso.mp3" type="audio/mpeg">
-        <!-- Note: Replace with actual audio URL or host the file -->
-    </audio>
+    
+    <div class="orientation-guide" id="orientation-guide" role="alert">
+        <p>For the best experience, please rotate your device to landscape mode</p>
+        <svg viewBox="0 0 24 24">
+            <path d="M16.48 2.52c3.27 1.55 5.61 4.72 5.97 8.48h1.5C23.44 4.84 18.29 0 12 0l-.66.03 3.81 3.81 1.33-1.32zm-6.25-.77c-.59-.59-1.54-.59-2.12 0L1.75 8.11c-.59.59-.59 1.54 0 2.12l12.02 12.02c.59.59 1.54.59 2.12 0l6.36-6.36c.59-.59.59-1.54 0-2.12L10.23 1.75zm4.6 19.44L2.81 9.17l6.36-6.36 12.02 12.02-6.36 6.36zm-7.31.29C4.25 19.94 1.91 16.76 1.55 13H.05C.56 19.16 5.71 24 12 24l.66-.03-3.81-3.81-1.33 1.32z"/>
+        </svg>
+    </div>
 
     <script>
-        const heartContainer = document.getElementById('heart');
-        const audio = document.getElementById('background-music');
-
-        // Heart shape coordinates (approximated for LED placement)
-        const heartPoints = [
-            {x: 150, y: 100}, {x: 130, y: 80}, {x: 110, y: 70}, {x: 90, y: 80}, {x: 80, y: 100},
-            {x: 80, y: 120}, {x: 90, y: 140}, {x: 110, y: 160}, {x: 130, y: 180}, {x: 150, y: 200},
-            {x: 170, y: 180}, {x: 190, y: 160}, {x: 210, y: 140}, {x: 220, y: 120}, {x: 220, y: 100},
-            {x: 210, y: 80}, {x: 190, y: 70}, {x: 170, y: 80}
-        ];
-
-        // Add LEDs
-        heartPoints.forEach(point => {
-            const led = document.createElement('div');
-            led.className = 'led';
-            led.style.left = `${point.x - 5}px`; // Center the LED
-            led.style.top = `${point.y - 5}px`;
-            heartContainer.appendChild(led);
-        });
-
-        // Sparkle effect on hover
-        heartContainer.addEventListener('mousemove', (e) => {
-            const sparkle = document.createElement('div');
-            sparkle.className = 'sparkle';
-            sparkle.style.left = `${e.offsetX}px`;
-            sparkle.style.top = `${e.offsetY}px`;
-            heartContainer.appendChild(sparkle);
-            setTimeout(() => sparkle.remove(), 500); // Remove after animation
-        });
-
-        // Music toggle
-        let isPlaying = false;
-        function toggleMusic() {
-            if (isPlaying) {
-                audio.pause();
-                document.querySelector('.music-toggle').textContent = 'Play Music';
-            } else {
-                audio.play().catch(() => alert('Please interact with the page first to enable audio.'));
-                document.querySelector('.music-toggle').textContent = 'Pause Music';
+        // Create ambient particles
+        function createAmbientParticles() {
+            const isLowPower = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+            const particleCount = isLowPower ? 6 : 12;
+            const container = document.querySelector('.container');
+            for (let i = 0; i < particleCount; i++) {
+                setTimeout(() => {
+                    const particle = document.createElement('div');
+                    particle.classList.add('ambient-particle');
+                    
+                    const size = Math.random() * 5 + 3;
+                    particle.style.width = `${size}px`;
+                    particle.style.height = `${size}px`;
+                    
+                    const xPos = Math.random() * 100;
+                    const yPos = Math.random() * 100;
+                    particle.style.left = `${xPos}%`;
+                    particle.style.top = `${yPos}%`;
+                    
+                    if (!isLowPower) {
+                        particle.style.animation = `float ${Math.random() * 3 + 4}s ease-in-out infinite`;
+                        particle.style.animationDelay = `${Math.random() * 2}s`;
+                    }
+                    
+                    container.appendChild(particle);
+                    setTimeout(() => {
+                        particle.style.opacity = 0.2 + (Math.random() * 0.3);
+                    }, 100);
+                }, i * 200);
             }
-            isPlaying = !isPlaying;
         }
+
+        // Create celebration particles
+        function createCompletionParticles(x, y) {
+            const container = document.querySelector('.container');
+            for (let i = 0; i < 12; i++) {
+                const particle = document.createElement('div');
+                particle.classList.add('completion-particle');
+                
+                particle.style.left = `${x}px`;
+                particle.style.top = `${y}px`;
+                
+                container.appendChild(particle);
+                
+                setTimeout(() => {
+                    particle.style.opacity = '1';
+                    const angle = Math.random() * Math.PI * 2;
+                    const distance = Math.random() * 60 + 20;
+                    const duration = Math.random() * 0.8 + 0.6;
+                    
+                    particle.style.transition = `all ${duration}s cubic-bezier(0.165, 0.84, 0.44, 1)`;
+                    particle.style.transform = `translate(${Math.cos(angle) * distance}px, ${Math.sin(angle) * distance}px)`;
+                    
+                    setTimeout(() => {
+                        particle.style.opacity = '0';
+                        setTimeout(() => particle.remove(), 500);
+                    }, duration * 800);
+                }, i * 50);
+            }
+        }
+
+        // Enhance SVG
+        function enhanceSvg(svgElement) {
+            svgElement.setAttribute('role', 'img');
+            svgElement.setAttribute('aria-labelledby', 'title desc');
+            
+            if (!svgElement.querySelector('title')) {
+                const title = document.createElementNS('http://www.w3.org/2000/svg', 'title');
+                title.id = 'title';
+                title.textContent = 'Apple-Style Handwritten Hello Ritika';
+                svgElement.appendChild(title);
+            }
+            
+            if (!svgElement.querySelector('desc')) {
+                const desc = document.createElementNS('http://www.w3.org/2000/svg', 'desc');
+                desc.id = 'desc';
+                desc.textContent = 'A smooth, Apple-inspired handwritten animation of the text "Hello Ritika" with a premium iOS-style appearance';
+                svgElement.appendChild(desc);
+            }
+            
+            const defs = svgElement.querySelector('defs') || document.createElementNS('http://www.w3.org/2000/svg', 'defs');
+            
+            if (!svgElement.querySelector('defs')) {
+                svgElement.appendChild(defs);
+            }
+            
+            defs.innerHTML = `
+                <linearGradient id="apple-gradient" x1="0%" y1="0%" x2="100%" y2="0%" gradientUnits="userSpaceOnUse">
+                    <stop offset="0%" stop-color="#ff5e62">
+                        <animate attributeName="stop-color" values="#ff5e62; #ff9966; #2cd9c5; #ff5e62" dur="10s" repeatCount="indefinite" />
+                    </stop>
+                    <stop offset="50%" stop-color="#ff9966">
+                        <animate attributeName="stop-color" values="#ff9966; #2cd9c5; #ff5e62; #ff9966" dur="10s" repeatCount="indefinite" />
+                    </stop>
+                    <stop offset="100%" stop-color="#2cd9c5">
+                        <animate attributeName="stop-color" values="#2cd9c5; #ff5e62; #ff9966; #2cd9c5" dur="10s" repeatCount="indefinite" />
+                    </stop>
+                </linearGradient>
+                
+                <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
+                    <feGaussianBlur in="SourceGraphic" stdDeviation="3" result="blur" />
+                    <feFlood flood-color="#ffffff" result="glow-color" />
+                    <feComposite operator="in" in="glow-color" in2="blur" result="glow-blur" />
+                    <feMerge>
+                        <feMergeNode in="glow-blur" />
+                        <feMergeNode in="glow-blur" />
+                        <feMergeNode in="SourceGraphic" />
+                    </feMerge>
+                </filter>
+                
+                <filter id="subtle-blur" x="-10%" y="-10%" width="120%" height="120%">
+                    <feGaussianBlur in="SourceGraphic" stdDeviation="0.8" result="blur" />
+                    <feMerge>
+                        <feMergeNode in="blur" />
+                        <feMergeNode in="SourceGraphic" />
+                    </feMerge>
+                </filter>
+            `;
+            
+            const penTip = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+            penTip.setAttribute('id', 'pen-tip');
+            penTip.setAttribute('r', '3');
+            
+            const paths = svgElement.querySelectorAll('path');
+            if (paths.length > 0) {
+                const firstPath = paths[0];
+                const firstPoint = firstPath.getPointAtLength(0);
+                penTip.setAttribute('cx', firstPoint.x);
+                penTip.setAttribute('cy', firstPoint.y);
+            } else {
+                penTip.setAttribute('cx', '50');
+                penTip.setAttribute('cy', '50');
+            }
+            
+            svgElement.appendChild(penTip);
+            
+            return svgElement;
+        }
+
+        // Initialize SVG animation
+        function initSvgAnimation() {
+            const status = document.getElementById('animation-status');
+            status.textContent = 'Animation started: Drawing "Hello Ritika"';
+            
+            const svg = document.querySelector('.svg-wrapper svg');
+            const penTip = document.getElementById('pen-tip');
+            const paths = svg.querySelectorAll('path');
+            
+            paths.forEach(path => {
+                path.classList.add('hello-ritika-path');
+                path.setAttribute('fill', 'none');
+                path.setAttribute('stroke', 'url(#apple-gradient)');
+                path.setAttribute('stroke-width', '5');
+                path.setAttribute('stroke-linecap', 'round');
+                path.setAttribute('stroke-linejoin', 'round');
+                path.setAttribute('filter', 'url(#subtle-blur)');
+            });
+            
+            let animationDelay = 0.2;
+            const pathAnimations = [];
+            
+            paths.forEach((path, index) => {
+                const length = path.getTotalLength();
+                path.style.strokeDasharray = `${length} ${length}`;
+                path.style.strokeDashoffset = length;
+                
+                const duration = Math.max(0.6, Math.min(2, length / 300));
+                
+                pathAnimations.push({
+                    path,
+                    duration,
+                    delay: animationDelay,
+                    length
+                });
+                
+                animationDelay += duration * 0.8;
+            });
+            
+            let currentPathIndex = 0;
+            
+            function animateNextPath() {
+                if (currentPathIndex >= pathAnimations.length) {
+                    status.textContent = 'Animation completed: "Hello Ritika" drawn';
+                    const lastPath = pathAnimations[pathAnimations.length - 1].path;
+                    const lastPoint = lastPath.getPointAtLength(lastPath.getTotalLength());
+                    const svgRect = svg.getBoundingClientRect();
+                    const containerRect = document.querySelector('.container').getBoundingClientRect();
+                    
+                    const x = svgRect.left - containerRect.left + lastPoint.x;
+                    const y = svgRect.top - containerRect.top + lastPoint.y;
+                    
+                    createCompletionParticles(x, y);
+                    
+                    if (navigator.vibrate) {
+                        navigator.vibrate([15, 30, 15]);
+                    }
+                    
+                    return;
+                }
+                
+                const { path, duration, length } = pathAnimations[currentPathIndex];
+                
+                path.style.transition = `stroke-dashoffset ${duration}s cubic-bezier(.42,0,.58,1)`;
+                path.style.strokeDashoffset = 0;
+                
+                let startTime = null;
+                
+                function animatePen(timestamp) {
+                    if (!startTime) startTime = timestamp;
+                    const elapsed = timestamp - startTime;
+                    const progress = Math.min(elapsed / (duration * 1000), 1);
+                    
+                    if (progress < 1) {
+                        const point = path.getPointAtLength(progress * length);
+                        penTip.setAttribute('cx', point.x);
+                        penTip.setAttribute('cy', point.y);
+                        requestAnimationFrame(animatePen);
+                    } else {
+                        currentPathIndex++;
+                        setTimeout(animateNextPath, 100);
+                    }
+                }
+                
+                requestAnimationFrame(animatePen);
+            }
+            
+            setTimeout(animateNextPath, 500);
+        }
+
+        // Audio control logic
+        function initAudioControls() {
+            const audio = document.getElementById('bg-music');
+            const playBtn = document.getElementById('play-music');
+            const pauseBtn = document.getElementById('pause-music');
+
+            audio.addEventListener('error', (e) => {
+                console.error('Error loading audio:', e);
+                playBtn.disabled = true;
+                playBtn.style.opacity = '0.5';
+                playBtn.style.display = 'flex';
+                pauseBtn.style.display = 'none';
+                playBtn.title = 'Audio file could not be loaded';
+            });
+
+            audio.addEventListener('play', () => {
+                playBtn.style.display = 'none';
+                pauseBtn.style.display = 'flex';
+            });
+
+            audio.addEventListener('pause', () => {
+                playBtn.style.display = 'flex';
+                pauseBtn.style.display = 'none';
+            });
+
+            playBtn.addEventListener('click', () => {
+                audio.play().then(() => {
+                    playBtn.style.display = 'none';
+                    pauseBtn.style.display = 'flex';
+                }).catch(err => console.error('Error playing audio:', err));
+            });
+
+            pauseBtn.addEventListener('click', () => {
+                audio.pause();
+                playBtn.style.display = 'flex';
+                pauseBtn.style.display = 'none';
+            });
+
+            playBtn.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    playBtn.click();
+                }
+            });
+
+            pauseBtn.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    pauseBtn.click();
+                }
+            });
+        }
+
+        // Initialize when DOM is loaded
+        document.addEventListener('DOMContentLoaded', () => {
+            initAudioControls();
+            
+            if (window.screen.orientation && window.screen.orientation.lock) {
+                window.screen.orientation.lock('landscape').catch(err => {
+                    console.warn('Orientation lock failed:', err);
+                });
+            }
+            
+            fetch('hello.svg')
+                .then(response => response.text())
+                .then(data => {
+                    const parser = new DOMParser();
+                    const svgDoc = parser.parseFromString(data, 'image/svg+xml');
+                    const svgElement = svgDoc.querySelector('svg');
+                    
+                    if (!svgElement.hasAttribute('viewBox')) {
+                        svgElement.setAttribute('viewBox', '0 0 600 200');
+                    }
+                    
+                    const enhancedSvg = enhanceSvg(svgElement);
+                    
+                    document.querySelector('.svg-wrapper').appendChild(enhancedSvg);
+                    
+                    setTimeout(() => {
+                        document.getElementById('loading').style.opacity = '0';
+                        setTimeout(() => {
+                            document.getElementById('loading').style.display = 'none';
+                            document.getElementById('svg-container').style.display = 'block';
+                            initSvgAnimation();
+                        }, 500);
+                    }, 1200);
+                })
+                .catch(error => {
+                    console.error('Error loading SVG:', error);
+                    document.getElementById('loading').style.opacity = '0';
+                    setTimeout(() => {
+                        document.getElementById('loading').style.display = 'none';
+                        document.getElementById('svg-container').style.display = 'block';
+                        document.querySelector('.svg-wrapper').innerHTML = 
+                            `<div style="color: white; text-align: center; padding: 20px; font-size: 24px; font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', sans-serif;">
+                                Hello Ritika
+                            </div>`;
+                    }, 500);
+                });
+            
+            createAmbientParticles();
+        });
     </script>
 </body>
 </html>
