@@ -414,37 +414,27 @@
                 starMapModal.style.display = 'none';
                 document.body.style.overflow = 'auto';
             }
-        });
-
-        // Check device orientation
-        function checkOrientation() {
-            const orientationGuide = document.getElementById('orientation-guide');
+        });        // Handle responsive layout adjustments
+        function handleResponsiveLayout() {
+            const svgContainer = document.getElementById('svg-container');
+            const svgWrapper = document.querySelector('.svg-wrapper');
             
-            function handleOrientationChange() {
-                if (window.innerWidth < 480 && window.innerHeight > window.innerWidth) {
-                    orientationGuide.style.display = 'flex';
-                } else {
-                    orientationGuide.style.display = 'none';
+            function adjustLayout() {
+                if (window.innerWidth <= 480) {
+                    svgWrapper.style.height = 'auto';
+                    const svg = svgWrapper.querySelector('svg');
+                    if (svg) {
+                        svg.style.height = 'auto';
+                        svg.style.maxHeight = '70vh';
+                    }
                 }
             }
             
-            // Initial check
-            handleOrientationChange();
+            // Initial adjustment
+            adjustLayout();
             
-            // Listen for orientation changes
-            window.addEventListener('resize', handleOrientationChange);
-            window.addEventListener('orientationchange', handleOrientationChange);
-            
-            // Auto-dismiss after showing for a while
-            setTimeout(() => {
-                if (orientationGuide.style.display === 'flex') {
-                    orientationGuide.style.opacity = '0';
-                    setTimeout(() => {
-                        orientationGuide.style.display = 'none';
-                        orientationGuide.style.opacity = '1';
-                    }, 1000);
-                }
-            }, 5000);
+            // Listen for window resize
+            window.addEventListener('resize', adjustLayout);
         }
 
         // Day counter update function
@@ -476,9 +466,8 @@
             
             // Initialize star map modal
             initStarMap();
-            
-            // Check orientation
-            checkOrientation();
+              // Handle responsive layout
+            handleResponsiveLayout();
             
             // Update day counter
             updateDayCounter();
