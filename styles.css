@@ -1,0 +1,377 @@
+body {
+            margin: 0;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            background: linear-gradient(135deg, #000000, #1a1a1a, #0d3934, #ff5e62);
+            background-size: 200% 200%;
+            animation: gradientShift 15s ease infinite;
+            overflow: hidden;
+            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", sans-serif;
+            perspective: 1000px;
+            touch-action: manipulation;
+        }
+        
+        @keyframes gradientShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        
+        .container {
+            position: relative;
+            width: 100vw;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+        }
+        
+        #svg-container {
+            width: 95vw;
+            max-width: 95vw;
+            height: 90vh;
+            filter: drop-shadow(0 10px 30px rgba(0, 0, 0, 0.6));
+            opacity: 0;
+            transform: translateY(20px) scale(0.96);
+            transition: all 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            animation: fadeIn 1s cubic-bezier(0.215, 0.61, 0.355, 1) 0.3s forwards;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .svg-wrapper {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .svg-wrapper svg {
+            width: 100%;
+            height: 100%;
+            max-height: 90vh;
+            object-fit: contain;
+        }
+        
+        .svg-wrapper:hover svg {
+            transform: scale(1.02);
+            transition: transform 0.3s ease;
+            filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.3));
+        }
+        
+        #pen-tip {
+            fill: #ffffff;
+            filter: url(#glow);
+            opacity: 0.9;
+            transform-origin: center;
+            animation: penPulse 1.5s ease-in-out infinite;
+        }
+        
+        @keyframes penPulse {
+            0%, 100% { opacity: 0.9; r: 3; }
+            50% { opacity: 1; r: 3.8; }
+        }
+        
+        .hello-ritika-path {
+            fill: none;
+            stroke: url(#apple-gradient);
+            stroke-width: 5;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+            filter: url(#subtle-blur);
+        }
+        
+        @keyframes fadeIn {
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+        
+        @keyframes draw {
+            to { stroke-dashoffset: 0; }
+        }
+        
+        .ambient-particle {
+            position: absolute;
+            border-radius: 50%;
+            background: radial-gradient(rgba(255, 255, 255, 0.8), rgba(255, 255, 255, 0));
+            pointer-events: none;
+            opacity: 0;
+        }
+        
+        .completion-particle {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            border-radius: 50%;
+            background: white;
+            box-shadow: 0 0 10px 2px rgba(255, 255, 255, 0.8);
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        /* Mouse/touch trail particles */
+        .trail-particle {
+            position: absolute;
+            border-radius: 50%;
+            background: radial-gradient(rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0));
+            pointer-events: none;
+            z-index: 10;
+            transform: translate(-50%, -50%);
+            opacity: 0;
+            transition: opacity 0.2s ease;
+        }
+        
+        .loading {
+            position: absolute;
+            width: 40px;
+            height: 40px;
+            border: 3px solid rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            border-top-color: rgba(255, 255, 255, 0.8);
+            animation: spin 1s ease-in-out infinite;
+            opacity: 1;
+            transition: opacity 0.5s ease;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        .ios-blur {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            backdrop-filter: blur(30px);
+            -webkit-backdrop-filter: blur(30px);
+            background-color: rgba(30, 30, 30, 0.3);
+            border-radius: 0;
+            opacity: 0;
+            transform: scale(0.9);
+            animation: blurReveal 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+            z-index: -1;
+        }
+        
+        .audio-controls {
+            position: absolute;
+            bottom: 20px;
+            right: 20px;
+            z-index: 100;
+            display: flex;
+            gap: 10px;
+            opacity: 0;
+            animation: fadeIn 0.5s ease 2s forwards;
+        }
+        
+        .audio-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            border: none;
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(5px);
+            -webkit-backdrop-filter: blur(5px);
+            color: white;
+            font-size: 18px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .audio-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: scale(1.05);
+        }
+        
+        .audio-btn:active {
+            transform: scale(0.95);
+        }
+
+        /* Day counter styles */
+        .day-counter {
+            position: absolute;
+            bottom: 20px;
+            left: 20px;
+            color: white;
+            font-size: 16px;
+            padding: 12px 18px;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(5px);
+            -webkit-backdrop-filter: blur(5px);
+            border-radius: 20px;
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeIn 1s ease 2.5s forwards;
+            text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+            z-index: 100;
+            cursor: default;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        }
+
+        .day-counter:hover {
+            transform: translateY(-3px) scale(1.03);
+            background: rgba(255, 255, 255, 0.15);
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.3);
+        }
+
+        /* Star map modal */
+        .starmap-button {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(5px);
+            -webkit-backdrop-filter: blur(5px);
+            padding: 10px 15px;
+            border-radius: 20px;
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+            opacity: 0;
+            animation: fadeIn 1s ease 2.7s forwards;
+            z-index: 100;
+            transition: all 0.3s ease;
+            border: none;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .starmap-button:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-2px);
+        }
+
+        .starmap-button:active {
+            transform: translateY(1px);
+        }
+
+        .star-icon {
+            font-size: 18px;
+        }
+
+        .starmap-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            z-index: 1000;
+        }
+
+        .starmap-modal.active {
+            opacity: 1;
+            pointer-events: all;
+        }
+
+        .starmap-content {
+            position: relative;
+            width: 90%;
+            height: 90%;
+            margin: 2% auto;
+            background: #000;
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        .starmap-container {
+            width: 100%;
+            height: 100%;
+        }
+
+        .starmap-close {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            color: white;
+            padding: 8px 12px;
+            border-radius: 50%;
+            cursor: pointer;
+            z-index: 1001;
+            font-size: 18px;
+            transition: background 0.3s ease;
+        }
+
+        .starmap-close:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .starmap-title {
+            position: absolute;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            color: white;
+            font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', sans-serif;
+            font-size: 1.2em;
+            z-index: 1001;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+        }
+
+        @keyframes blurReveal {
+            to {
+                opacity: 0.7;
+                transform: scale(1);
+            }
+        }
+        
+        @media (max-width: 768px) {
+            #svg-container {
+                width: 100vw;
+                max-width: 100vw;
+            }
+            
+            .day-counter {
+                font-size: 14px;
+                padding: 10px 16px;
+            }
+            
+            .starmap-button {
+                font-size: 14px;
+                padding: 8px 12px;
+            }
+            
+            .starmap-title {
+                font-size: 20px;
+            }
+        }
+        
+        @media (max-width: 480px) and (orientation: portrait) {
+            .audio-controls {
+                bottom: 10px;
+                right: 10px;
+            }
+            
+            .audio-btn {
+                width: 44px;
+                height: 44px;
+                font-size: 18px;
+            }
+            
+            .day-counter {
+                bottom: 10px;
+                left: 10px;
+                font-size: 12px;
+                padding: 8px 12px;
+            }
+        }
